@@ -24,7 +24,7 @@ pub fn solver(input: &str) -> u32 {
         .unwrap()
 }
 
-#[aoc(day2, part2)]
+#[aoc(day2, part2, two)]
 pub fn solver_part2(input: &str)-> u32 {
     let all: HashMap<&str, u32> = HashMap::from([
         ("A X", 3 + 1),
