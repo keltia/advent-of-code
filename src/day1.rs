@@ -1,5 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator};
-use itertools::{Itertools, max};
+use itertools::Itertools;
 
 #[aoc_generator(day1)]
 pub fn input_generator(input: &str) -> Vec<u32> {
