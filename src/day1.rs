@@ -39,12 +39,22 @@ pub fn solve_part1_sort(input: &[u32]) -> u32 {
     *list[input.len() - 1]
 }
 
-#[aoc(day1, part2)]
+#[aoc(day1, part2, fold)]
 pub fn solve_part2(input: &[u32]) -> u32 {
     let list: Vec<_> = input.iter().sorted().collect();
     let sum = [1, 2, 3]
         .iter()
         .map(|v| list[input.len() - *v])
         .fold(0, |sum, &x| sum + x);
+    sum
+}
+
+#[aoc(day1, part2, sum)]
+pub fn solve_part2_sum(input: &[u32]) -> u32 {
+    let list: Vec<_> = input.iter().sorted().collect();
+    let sum = [1, 2, 3]
+        .iter()
+        .map(|v| list[input.len() - *v])
+        .sum();
     sum
 }
