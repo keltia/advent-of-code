@@ -32,8 +32,7 @@ pub fn solve_part1(input: &str) -> u32 {
         // Now for each character, find value and sum everything.
         //
         .map(|c| {
-            let c = c as char;
-            let r = match c {
+            let r = match c as char {
                 // 97..122 => 1..16
                 'a'..='z' => {
                     (c as u8) - 96
@@ -45,7 +44,8 @@ pub fn solve_part1(input: &str) -> u32 {
                 _ => panic!("impossible")
             };
             r as u32
-        }).sum::<u32>()
+        }).sum1()
+        .unwrap()
 }
 
 // #[aoc(day3,part2)]
