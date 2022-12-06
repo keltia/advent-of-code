@@ -11,7 +11,7 @@ pub fn generator(input: &str) -> Vec<u8> {
         .map(|line| {
             let splt = line
                 .split_at(line.len() / 2);
-            (splt.0.clone(), splt.1.clone())
+            (splt.0.to_string(), splt.1.to_string())
         })
         //
         // Check which character is present in both
