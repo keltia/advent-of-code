@@ -1,8 +1,8 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 use itertools::{Itertools, Either};
 
-#[aoc_generator(day3)]
-pub fn generator(input: &str) -> Vec<u8> {
+#[aoc(day3,part1)]
+pub fn solve_part1(input: &str) -> u32 {
     input
         .lines()
         //
@@ -28,15 +28,11 @@ pub fn generator(input: &str) -> Vec<u8> {
                 });
             uniq[0] as u8
         })
-        .collect()
-}
-
-#[aoc(day3,part1)]
-pub fn solve_part1(input: &[u8]) -> u32 {
-    input
-        .iter()
+        //
+        // Now for each character, find value and sum everything.
+        //
         .map(|c| {
-            let c = *c as char;
+            let c = c as char;
             let r = match c {
                 // 97..122 => 1..16
                 'a'..='z' => {
