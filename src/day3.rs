@@ -79,47 +79,59 @@ pub fn solve_part1_any(input: &str) -> u32 {
     add_all(&list)
 }
 
-fn find_common(t: (&str, &str, &str)) -> u32 {
+/// Find the intersection of all three sets
+///
+pub fn find_common(t: (&str, &str, &str)) -> u8 {
     // Given (A, B, C), compute D = A⏀B then D⏀C
     //
-    let (r1, r2) = (t.0, t.1);
-    let uniq = r1
-        .bytes()
-        .map(|l| {
-            // Check which character is present in both
-            //
-            let (uniq, _not): (Vec<_>, Vec<_>) = l.chars().partition_map(|c| {
-                if r.contains(c) {
-                    Either::Left(c)
-                } else {
-                    Either::Right(c)
-                }
-            });
-            uniq
-        })
-        .collect();
-    0
+    let (r1, r2, r3) = (t.0, t.1, t.2);
+    let r1: HashSet<char> = r1.chars().collect();
+    let r2: HashSet<char> = r2.chars().collect();
+    let r3: HashSet<char> = r3.chars().collect();
+
+    let res: HashSet<char> = r1.intersection(&r2).copied().collect();
+
+    let d: HashSet<_> = res.intersection(&r3).collect();
+    let sum = **d.iter().nth(0).unwrap();
+    sum as u8
 }
 
-#[aoc(day3, part2)]
-pub fn solve_part2(input: &str) -> u32 {
+#[aoc(day3, part2, references)]
+pub fn solve_part2_str(input: &str) -> u32 {
     let mut bundles = vec![];
 
     // Read every 3 lines, create a list of tuples
     //
-    let mut lines = input.split('\n');
+    let mut lines = input.lines();
     loop {
         match lines.next() {
             None => break,
             Some(r1) => {
                 let r2 = lines.next().unwrap();
                 let r3 = lines.next().unwrap();
-                bundles.push((r1.to_string(), r2.to_string(), r3.to_string()));
+                bundles.push((r1, r2, r3));
             }
         }
     }
     // Now act upon the list
     //
-    //bundles.iter().map().sum1().unwrap()
-    0
+    let res: Vec<u8> = bundles.iter().map(|item| {
+        let (r1, r2, r3) = item.clone();
+        find_common((r1, r2, r3))
+    }).collect();
+    add_all(&res)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_find_common() {
+        let a = "abcd";
+        let b = "cgjh";
+        let c= "iuycyt";
+
+        assert_eq!('c' as u8, find_common((a, b, c)))
+    }
 }
