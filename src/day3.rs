@@ -79,7 +79,47 @@ pub fn solve_part1_any(input: &str) -> u32 {
     add_all(&list)
 }
 
-// #[aoc(day3,part2)]
-// pub fn solve_part2(input: &[u8]) -> u32 {
-//     unimplemented!()
-// }
+fn find_common(t: (&str, &str, &str)) -> u32 {
+    // Given (A, B, C), compute D = A⏀B then D⏀C
+    //
+    let (r1, r2) = (t.0, t.1);
+    let uniq = r1
+        .bytes()
+        .map(|l| {
+            // Check which character is present in both
+            //
+            let (uniq, _not): (Vec<_>, Vec<_>) = l.chars().partition_map(|c| {
+                if r.contains(c) {
+                    Either::Left(c)
+                } else {
+                    Either::Right(c)
+                }
+            });
+            uniq
+        })
+        .collect();
+    0
+}
+
+#[aoc(day3, part2)]
+pub fn solve_part2(input: &str) -> u32 {
+    let mut bundles = vec![];
+
+    // Read every 3 lines, create a list of tuples
+    //
+    let mut lines = input.split('\n');
+    loop {
+        match lines.next() {
+            None => break,
+            Some(r1) => {
+                let r2 = lines.next().unwrap();
+                let r3 = lines.next().unwrap();
+                bundles.push((r1.to_string(), r2.to_string(), r3.to_string()));
+            }
+        }
+    }
+    // Now act upon the list
+    //
+    //bundles.iter().map().sum1().unwrap()
+    0
+}
