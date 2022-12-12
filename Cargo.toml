@@ -15,4 +15,5 @@ array-macro = "2.1.5"
 rust-crypto = "0.2.36"
 itertools = "0"
 serde = { version = "1.0.149", features = ["derive"] }
+nom = "7.1.1"
 
