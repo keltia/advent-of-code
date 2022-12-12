@@ -20,6 +20,21 @@ fn add_all(list: &[u8]) -> u32 {
         .unwrap()
 }
 
+/// Alternate add_all()
+///
+pub fn add_all_index(list: &[u8]) -> u32 {
+    let all = ('a'..='z').into_iter().collect::<String>();
+    let all = all + &('A'..='Z').into_iter().collect::<String>();
+
+    list.iter()
+        .map(|&c| {
+            let r = all.find(c as char).unwrap();
+            r as u32
+        })
+        .sum1()
+        .unwrap()
+}
+
 #[aoc(day3, part1, partition_map)]
 pub fn solve_part1(input: &str) -> u32 {
     let list = input
@@ -49,6 +64,37 @@ pub fn solve_part1(input: &str) -> u32 {
     // Now for each character, find value and sum everything.
     //
     add_all(&list)
+}
+
+#[aoc(day3, part1, partition_map_index)]
+pub fn solve_part1_index(input: &str) -> u32 {
+    let list = input
+        .lines()
+        //
+        // split at middle
+        //
+        .map(|line| {
+            let splt = line.split_at(line.len() / 2);
+            (splt.0.to_string(), splt.1.to_string())
+        })
+        //
+        // Check which character is present in both
+        //
+        .map(|(l, r)| {
+            let (uniq, _not): (Vec<_>, Vec<_>) = l.chars().partition_map(|c| {
+                if r.contains(c) {
+                    Either::Left(c)
+                } else {
+                    Either::Right(c)
+                }
+            });
+            uniq[0] as u8
+        })
+        .collect::<Vec<u8>>();
+    //
+    // Now for each character, find value and sum everything.
+    //
+    add_all_index(&list)
 }
 
 /// Alternate version using a set and .any().  Cleaner but much slower.
@@ -115,10 +161,13 @@ pub fn solve_part2_str(input: &str) -> u32 {
     }
     // Now act upon the list
     //
-    let res: Vec<u8> = bundles.iter().map(|item| {
-        let (r1, r2, r3) = item.clone();
-        find_common((r1, r2, r3))
-    }).collect();
+    let res: Vec<u8> = bundles
+        .iter()
+        .map(|item| {
+            let (r1, r2, r3) = item.clone();
+            find_common((r1, r2, r3))
+        })
+        .collect();
     add_all(&res)
 }
 
@@ -130,7 +179,7 @@ mod tests {
     fn test_find_common() {
         let a = "abcd";
         let b = "cgjh";
-        let c= "iuycyt";
+        let c = "iuycyt";
 
         assert_eq!('c' as u8, find_common((a, b, c)))
     }
