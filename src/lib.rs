@@ -6,4 +6,4 @@ mod day5;
 
 use aoc_runner_derive::aoc_lib;
 
-aoc_lib!{ year = 2022 }
+aoc_lib!{ year = 2023 }
