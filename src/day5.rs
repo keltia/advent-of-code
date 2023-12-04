@@ -22,12 +22,12 @@ pub struct Start {
 }
 
 #[derive(Debug, Eq, PartialEq)]
-struct Bucket(char);
+struct Crate(char);
 
 /// Parse a bucket with a char inside
 ///
-fn parse_bucket(input: &str) -> IResult<&str, Bucket> {
-    let first = |s: &str| Bucket(s.chars().next().unwrap());
+fn parse_bucket(input: &str) -> IResult<&str, Crate> {
+    let first = |s: &str| Crate(s.chars().next().unwrap());
     let f = delimited(tag("["), take(1 as usize), tag("]"));
     map(f, first)(input)
 }
@@ -40,14 +40,22 @@ fn parse_none(input: &str) -> IResult<&str, ()> {
 
 /// Parse whether we have a bucket or not
 ///
-fn parse_bucket_or_not(input: &str) -> IResult<&str, Option<Bucket>> {
+fn parse_bucket_or_not(input: &str) -> IResult<&str, Option<Crate>> {
     alt((map(parse_bucket, Some), map(parse_none, |_| None)))(input)
 }
 
 /// Parse one line
 ///
-fn parse_one_line(input: &str) -> IResult<&str, Vec<Option<Bucket>>> {
-    many0(parse_bucket_or_not)(input)
+/// (C,())(( )(C,())){2,9}
+///
+fn parse_one_line(input: &str) -> IResult<&str, Vec<Option<Crate>>> {
+    let (input, c) = parse_bucket_or_not(input)?;
+    let mut cl: Vec<Option<Crate>> = vec![c];
+
+    loop {
+        let (input, c) =
+    }
+
 }
 
 //#[aoc_generator(day5)]
@@ -65,7 +73,7 @@ mod tests {
     fn test_parse_bucket_ok() {
         let a = "[P]";
         let r = parse_bucket(a).unwrap();
-        assert_eq!(Bucket('P'), r.1);
+        assert_eq!(Crate('P'), r.1);
     }
 
     #[test]
@@ -98,7 +106,7 @@ mod tests {
         assert!(r.is_ok());
         let r = r.unwrap();
         assert!(r.0.is_empty());
-        assert_eq!(Some(Bucket('P')), r.1);
+        assert_eq!(Some(Crate('P')), r.1);
     }
 
     #[test]
@@ -119,6 +127,6 @@ mod tests {
         let r = r.unwrap();
         dbg!(&r);
         assert!(r.0.is_empty());
-        assert_eq!(vec![Some(Bucket('P')), None, Some(Bucket('Z'))], r.1);
+        assert_eq!(vec![Some(Crate('P')), None, Some(Crate('Z'))], r.1);
     }
 }
