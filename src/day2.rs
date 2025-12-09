@@ -30,18 +30,16 @@ fn input_generator(input: &str) -> eyre::Result<Input> {
 
 #[aoc(day2, part1)]
 fn solver_part1(input: &Input) -> u64 {
-    let mut sum = 0;
-
-    for intv in &input.data {
-        let low = intv.0;
-        let high = intv.1;
-        sum += check_invalid(low, high);
-    }
-    sum
+    input
+        .data
+        .iter()
+        .fold(0u64, |acc, intv| acc + check_invalid(intv))
 }
 
-fn check_invalid(low: u64, high: u64) -> u64 {
+fn check_invalid(intv: &Intv) -> u64 {
     let mut sum = 0;
+    let low = intv.0;
+    let high = intv.1;
 
     for i in low..=high {
         let str = i.to_string();
