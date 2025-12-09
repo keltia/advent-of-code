@@ -80,60 +80,56 @@ impl Wheel {
         Self(initial)
     }
 
-    pub fn pos(&self) -> u32 { self.0 }
-
     pub fn left(&mut self, amount: u32) -> Turn {
         // Number of full rotations
-        let p = amount / SIZE;
-        dbg!(&amount, &p);
+        let mut fin = amount / SIZE;
 
-        // Remainder
-        let q = (amount % SIZE) as i32;
-        let res = (self.0 as i32) - q;
-        dbg!(&q, &res);
+        // Look at any possible remainder
+        let q = amount % SIZE;
+
+        // is this a full rotation (or multiple thereof)?
+        if q == 0 {
+            return Turn(fin);
+        }
+
+        let res = (self.0 as i32) - q as i32;
 
         // Final result is 0, count one more.
         if res == 0 {
             self.0 = res as u32;
-            return Turn(p + 1)
+            return Turn(fin + 1);
         }
 
         // Store result
-        let mut fin = 0;
         if res < 0 {
-            fin = if self.0 == 0 {
-                p
-            } else {
-                p + 1
-            };
+            fin = if self.0 == 0 { fin } else { fin + 1 };
             self.0 = (SIZE as i32 + res) as u32;
         } else {
             self.0 = res as u32;
-            fin = p;
         }
         Turn(fin)
     }
 
     pub fn right(&mut self, amount: u32) -> Turn {
         // Number of full rotations
-        let p = amount / SIZE;
-        dbg!(&amount, &p);
+        let fin = amount / SIZE;
 
-        let mut fin = 0;
-
-        // Look at result
+        // Look at any possible remainder
         let q = amount % SIZE;
-        let res = self.0 + q;
-        dbg!(&q, &res);
 
-        if res == 0 {
-            self.0 = res;
-            return Turn(p + 1);
+        // is this a full rotation (or multiple thereof)?
+        if q == 0 {
+            return Turn(fin);
         }
-        if res > SIZE {
-            fin = p + 1;
+
+        let res = self.0 + q;
+
+        // If we are at 0, we completed a full rotation
+        if res == 0 || res >= SIZE {
+            self.0 = res % SIZE;
+            return Turn(fin + 1);
         }
-        self.0 = res % SIZE;
+        self.0 = res;
 
         Turn(fin)
     }
@@ -149,7 +145,6 @@ fn solve_part2(input: &Input1) -> u32 {
             Move::Left(amount) => acc.left(*amount),
             Move::Right(amount) => acc.right(*amount),
         };
-        dbg!(&acc, &res);
         count += res.val();
         acc
     });
@@ -177,38 +172,70 @@ mod tests {
     }
 
     #[test]
-    fn test_wheel_initialization() {
+    fn test_turn_value() {
+        let turn = Turn(42);
+        assert_eq!(turn.val(), 42);
+    }
+
+    #[test]
+    fn test_wheel_new() {
         let wheel = Wheel::new(50);
         assert_eq!(wheel.pos(), 50);
     }
 
     #[test]
-    fn test_wheel_left_movement() {
+    fn test_wheel_left_simple() {
         let mut wheel = Wheel::new(50);
         let turn = wheel.left(30);
         assert_eq!(wheel.pos(), 20);
         assert_eq!(turn.val(), 0);
-
-        let turn = wheel.left(120);
-        assert_eq!(wheel.pos(), 0);
-        assert_eq!(turn.val(), 2);
     }
 
     #[test]
-    fn test_wheel_right_movement() {
+    fn test_wheel_right_simple() {
         let mut wheel = Wheel::new(50);
         let turn = wheel.right(30);
         assert_eq!(wheel.pos(), 80);
         assert_eq!(turn.val(), 0);
+    }
 
-        let turn = wheel.right(120);
+    #[test]
+    fn test_wheel_left_multiple() {
+        let mut wheel = Wheel::new(50);
+        let turn = wheel.left(130);
+        assert_eq!(wheel.pos(), 20);
+        assert_eq!(turn.val(), 1);
+    }
+
+    #[test]
+    fn test_wheel_right_multiple() {
+        let mut wheel = Wheel::new(50);
+        let turn = wheel.right(150);
         assert_eq!(wheel.pos(), 0);
         assert_eq!(turn.val(), 2);
     }
 
     #[test]
-    fn test_turn_value() {
-        let turn = Turn(42);
-        assert_eq!(turn.val(), 42);
+    fn test_wheel_zero_movement() {
+        let mut wheel = Wheel::new(50);
+        let turn = wheel.right(0);
+        assert_eq!(wheel.pos(), 50);
+        assert_eq!(turn.val(), 0);
+    }
+
+    #[test]
+    fn test_wheel_full_rotation_left() {
+        let mut wheel = Wheel::new(0);
+        let turn = wheel.left(100);
+        assert_eq!(wheel.pos(), 0);
+        assert_eq!(turn.val(), 1);
+    }
+
+    #[test]
+    fn test_wheel_full_rotation_right() {
+        let mut wheel = Wheel::new(0);
+        let turn = wheel.right(100);
+        assert_eq!(wheel.pos(), 0);
+        assert_eq!(turn.val(), 1);
     }
 }
