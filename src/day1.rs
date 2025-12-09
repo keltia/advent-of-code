@@ -155,6 +155,12 @@ fn solve_part2(input: &Input1) -> u32 {
 mod tests {
     use super::*;
 
+    impl Wheel {
+        pub fn pos(&self) -> u32 {
+            self.0
+        }
+    }
+
     #[test]
     fn test_sample_part1() {
         let s = "L68\nL30\nR48\nL5\nR60\nL55\nL1\nL99\nR14\nL82\n";
