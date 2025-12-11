@@ -1,4 +1,8 @@
 use aoc_runner_derive::{aoc, aoc_generator};
+use nom::{IResult, Parser};
+use nom::character::complete::digit1;
+use nom::character::one_of;
+use nom::multi::fold_many_m_n;
 
 #[derive(Debug)]
 struct Intv(u64, u64);
@@ -10,6 +14,7 @@ struct Input {
 
 // -----
 
+#[allow(dead_code)]
 #[aoc_generator(day2)]
 fn input_generator(input: &str) -> eyre::Result<Input> {
     let input = input
@@ -36,6 +41,8 @@ fn solver_part1(input: &Input) -> u64 {
         .fold(0u64, |acc, intv| acc + check_invalid_gemini3(intv))
 }
 
+// Naive, string-based approach
+//
 fn check_invalid(intv: &Intv) -> u64 {
     let mut sum = 0;
     let low = intv.0;
@@ -119,8 +126,38 @@ fn check_invalid_gemini3(intv: &Intv) -> u64 {
 
 #[aoc(day2, part2)]
 fn solver_part2(input: &Input) -> u64 {
-    0
+    input
+        .data
+        .iter()
+        .fold(0u64, |acc, intv| acc + check_more_invalid(intv))
 }
+
+fn check_more_invalid(intv: &Intv) -> u64 {
+    let low = intv.0;
+    let high = intv.1;
+    (low..=high).filter(|&i| {
+        let (_, val) = check_one_word(i).unwrap();
+        val.into_iter().inspect(|s| println!("{s}")).collect::<Vec<_>>();
+        true
+    }).sum()
+}
+
+fn check_one_word<'a>(word: u64) -> Vec<&'a str> {
+    let word = format!("{}", word).as_str();
+    let parser = fold_many_m_n(
+            2,
+            5,
+                  one_of("0123456789"),
+                  Vec::new,
+                  |mut acc: Vec<_>, item| {
+        acc.push(item);
+        acc
+    }).parse(word);
+    let (_, res) = parser.unwrap();
+    res.to_vec().to_owned()
+}
+
+// -----
 
 #[cfg(test)]
 mod tests {

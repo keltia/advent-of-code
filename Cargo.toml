@@ -16,3 +16,4 @@ array-macro = "2.1"
 itertools = "0"
 serde = { version = "1.0", features = ["derive"] }
 nom = "8"
+atoi = "2.0.0"
